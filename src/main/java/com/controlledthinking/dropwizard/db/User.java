@@ -102,7 +102,7 @@ public class User implements Serializable {
 
     @Override
     public String toString() {
-        return "com.controlledthinking.banana.model.User[ userId=" + userId + " ]";
+        return "com.controlledthinking.dropwizard.db.User[ userId=" + userId + " ]";
     }
     
 }
