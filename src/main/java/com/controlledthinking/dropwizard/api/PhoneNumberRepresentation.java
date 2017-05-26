@@ -7,17 +7,17 @@ package com.controlledthinking.dropwizard.api;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.validator.constraints.Length;
 
-public class Saying {
+public class PhoneNumberRepresentation {
     private long id;
 
     @Length(max = 3)
     private String content;
 
-    public Saying() {
+    public PhoneNumberRepresentation() {
         // Jackson deserialization
     }
 
-    public Saying(long id, String content) {
+    public PhoneNumberRepresentation(long id, String content) {
         this.id = id;
         this.content = content;
     }

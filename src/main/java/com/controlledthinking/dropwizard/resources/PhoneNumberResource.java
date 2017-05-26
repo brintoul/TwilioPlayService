@@ -6,7 +6,7 @@
 package com.controlledthinking.dropwizard.resources;
 
 import com.codahale.metrics.annotation.Timed;
-import com.controlledthinking.dropwizard.api.Saying;
+import com.controlledthinking.dropwizard.api.PhoneNumberRepresentation;
 import com.controlledthinking.dropwizard.db.PhoneNumberDAO;
 import com.controlledthinking.dropwizard.db.PhoneNumber;
 import io.dropwizard.hibernate.UnitOfWork;
@@ -36,8 +36,8 @@ public class PhoneNumberResource {
     @GET
     @Timed
     @UnitOfWork
-    public Saying retrieveNumbers(@QueryParam("name") Optional<String> name) {
-        return new Saying(11, dao.findAll().get(0).getNumberText());
+    public PhoneNumberRepresentation retrieveNumbers(@QueryParam("name") Optional<String> name) {
+        return new PhoneNumberRepresentation(11, dao.findAll().get(0).getNumberText());
     }
      
     @GET

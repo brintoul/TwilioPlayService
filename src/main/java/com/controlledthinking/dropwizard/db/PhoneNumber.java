@@ -6,7 +6,6 @@
 package com.controlledthinking.dropwizard.db;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import java.io.Serializable;
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -19,8 +18,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
-import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -32,8 +31,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 @NamedQueries({
     @NamedQuery(name = "PhoneNumber.findAll", query = "SELECT p FROM PhoneNumber p"),
     @NamedQuery(name = "PhoneNumber.findByPhoneNumberId", query = "SELECT p FROM PhoneNumber p WHERE p.phoneNumberId = :phoneNumberId"),
-    @NamedQuery(name = "PhoneNumber.findByUserId", query = "SELECT p FROM PhoneNumber p INNER JOIN p.userId u WHERE u.userId = :userId")
-})
+    @NamedQuery(name = "PhoneNumber.findByUserId", query = "SELECT p FROM PhoneNumber p WHERE p.user.userId = :userId"),
+    @NamedQuery(name = "PhoneNumber.findByNumberText", query = "SELECT p FROM PhoneNumber p WHERE p.numberText = :numberText")})
 public class PhoneNumber implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -42,12 +41,11 @@ public class PhoneNumber implements Serializable {
     @Basic(optional = false)
     @Column(name = "phone_number_id")
     private Integer phoneNumberId;
-    @Size(max = 32)
     @Column(name = "number_text")
     private String numberText;
     @JoinColumn(name = "user_id", referencedColumnName = "user_id")
     @ManyToOne
-    private User userId;
+    private User user;
 
     public PhoneNumber() {
     }
@@ -55,8 +53,7 @@ public class PhoneNumber implements Serializable {
     public PhoneNumber(Integer phoneNumberId) {
         this.phoneNumberId = phoneNumberId;
     }
-    
-    @JsonProperty
+
     public Integer getPhoneNumberId() {
         return phoneNumberId;
     }
@@ -65,7 +62,6 @@ public class PhoneNumber implements Serializable {
         this.phoneNumberId = phoneNumberId;
     }
 
-    @JsonProperty
     public String getNumberText() {
         return numberText;
     }
@@ -74,13 +70,14 @@ public class PhoneNumber implements Serializable {
         this.numberText = numberText;
     }
 
+    @XmlTransient
     @JsonIgnore
-    public User getUserId() {
-        return userId;
+    public User getUser() {
+        return user;
     }
 
-    public void setUserId(User userId) {
-        this.userId = userId;
+    public void setUser(User user) {
+        this.user = user;
     }
 
     @Override
@@ -105,7 +102,7 @@ public class PhoneNumber implements Serializable {
 
     @Override
     public String toString() {
-        return "com.controlledthinking.dropwizard.db.PhoneNumber[ phoneNumberText=" + numberText + " ]";
+        return "bananamodel.PhoneNumbers[ phoneNumberId=" + phoneNumberId + " ]";
     }
     
 }
