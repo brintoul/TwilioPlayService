@@ -5,6 +5,7 @@
  */
 package com.controlledthinking.dropwizard.db;
 
+import com.controlledthinking.dropwizard.core.PhoneNumber;
 import io.dropwizard.hibernate.AbstractDAO;
 import java.util.List;
 import org.hibernate.SessionFactory;

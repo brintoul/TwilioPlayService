@@ -3,14 +3,17 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.controlledthinking.dropwizard.db;
+package com.controlledthinking.dropwizard.core;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.Set;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -36,7 +39,8 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Customer.findByFirstName", query = "SELECT c FROM Customer c WHERE c.firstName = :firstName"),
     @NamedQuery(name = "Customer.findByLastName", query = "SELECT c FROM Customer c WHERE c.lastName = :lastName"),
     @NamedQuery(name = "Customer.findByUser", query = "SELECT c FROM Customer c WHERE c.user.userId = :userId"),    
-    @NamedQuery(name = "Customer.findByNumberText", query = "SELECT c FROM Customer c WHERE c.numberText = :numberText")})
+    @NamedQuery(name = "Customer.findByNumberText", query = "SELECT c FROM Customer c WHERE c.numberText = :numberText")
+})
 public class Customer implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -51,10 +55,10 @@ public class Customer implements Serializable {
     private String lastName;
     @Column(name = "number_text")
     private String numberText;
-    @ManyToMany(mappedBy = "customerCollection")
-    private Collection<MessageGroup> messageGroupCollection;
+    @ManyToMany(mappedBy = "customerCollection", fetch=FetchType.LAZY)
+    private Set<MessageGroup> messageGroups;
     @JoinColumn(name = "user_id", referencedColumnName = "user_id")
-    @ManyToOne
+    @ManyToOne(fetch=FetchType.LAZY, optional=false)
     private User user;
 
     public Customer() {
@@ -101,13 +105,14 @@ public class Customer implements Serializable {
 
     @XmlTransient
     public Collection<MessageGroup> getMessageGroupCollection() {
-        return messageGroupCollection;
+        return messageGroups;
     }
 
-    public void setMessageGroupCollection(Collection<MessageGroup> messageGroupCollection) {
-        this.messageGroupCollection = messageGroupCollection;
+    public void setMessageGroupCollection(Set<MessageGroup> messageGroups) {
+        this.messageGroups = messageGroups;
     }
 
+    @JsonIgnore
     public User getUser() {
         return user;
     }

@@ -5,10 +5,13 @@
  */
 package com.controlledthinking.dropwizard.db;
 
+import com.controlledthinking.dropwizard.core.MessageGroup;
+import com.controlledthinking.dropwizard.core.Customer;
 import io.dropwizard.hibernate.AbstractDAO;
 import java.util.List;
 import org.hibernate.HibernateException;
 import org.hibernate.SessionFactory;
+import org.hibernate.query.Query;
 
 /**
  *
@@ -27,6 +30,12 @@ public class MessageGroupDAO extends AbstractDAO<MessageGroup> {
     
     public List<MessageGroup> getAllForUser(int userId) {
         return list(namedQuery("MessageGroup.findByUserId").setParameter("userId", userId));
+    }
+    
+    public MessageGroup getWithCustomers(int groupId) {
+        Query query = namedQuery("MessageGroup.findByGroupIdWithCustomers");
+        query.setParameter("groupId", groupId);
+        return uniqueResult(query);
     }
     
     public List<Customer> getCustomersForGroup(int groupId) {

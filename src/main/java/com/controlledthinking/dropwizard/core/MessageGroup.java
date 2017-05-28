@@ -3,15 +3,17 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.controlledthinking.dropwizard.db;
+package com.controlledthinking.dropwizard.core;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.Set;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -34,7 +36,7 @@ import javax.xml.bind.annotation.XmlTransient;
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "MessageGroup.findAll", query = "SELECT m FROM MessageGroup m"),
-    @NamedQuery(name = "MessageGroup.findByGroupId", query = "SELECT m FROM MessageGroup m WHERE m.groupId = :groupId"),
+    @NamedQuery(name = "MessageGroup.findByGroupIdWithCustomers", query = "SELECT m FROM MessageGroup m LEFT JOIN FETCH m.customerCollection WHERE m.groupId = :groupId"),
     @NamedQuery(name = "MessageGroup.findByUserId", query = "SELECT m FROM MessageGroup m WHERE m.user.userId = :userId"),
     @NamedQuery(name = "MessageGroup.findByGroupName", query = "SELECT m FROM MessageGroup m WHERE m.groupName = :groupName")})
 public class MessageGroup implements Serializable {
@@ -48,12 +50,14 @@ public class MessageGroup implements Serializable {
     @Column(name = "group_name")
     private String groupName;
     @JoinTable(name = "cust_group", joinColumns = {
-        @JoinColumn(name = "group_id", referencedColumnName = "group_id")}, inverseJoinColumns = {
-        @JoinColumn(name = "cust_id", referencedColumnName = "customer_id")})
+        @JoinColumn(name = "group_id", referencedColumnName = "group_id")}, 
+        inverseJoinColumns = {
+            @JoinColumn(name = "cust_id", referencedColumnName = "customer_id")
+        })
     @ManyToMany
-    private Collection<Customer> customerCollection;
+    private Set<Customer> customerCollection;
     @JoinColumn(name = "user_id", referencedColumnName = "user_id")
-    @ManyToOne
+    @ManyToOne(fetch=FetchType.LAZY)
     private User user;
 
     public MessageGroup() {
@@ -80,13 +84,12 @@ public class MessageGroup implements Serializable {
         this.groupName = groupName;
     }
 
-    @XmlTransient
     @JsonIgnore
     public Collection<Customer> getCustomerCollection() {
         return customerCollection;
     }
 
-    public void setCustomerCollection(Collection<Customer> customerCollection) {
+    public void setCustomerCollection(Set<Customer> customerCollection) {
         this.customerCollection = customerCollection;
     }
 

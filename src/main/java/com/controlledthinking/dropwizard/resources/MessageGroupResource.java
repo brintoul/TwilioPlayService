@@ -6,10 +6,11 @@
 package com.controlledthinking.dropwizard.resources;
 
 import com.codahale.metrics.annotation.Timed;
-import com.controlledthinking.dropwizard.db.Customer;
-import com.controlledthinking.dropwizard.db.MessageGroup;
+import com.controlledthinking.dropwizard.core.Customer;
+import com.controlledthinking.dropwizard.db.CustomerDAO;
+import com.controlledthinking.dropwizard.core.MessageGroup;
 import com.controlledthinking.dropwizard.db.MessageGroupDAO;
-import com.controlledthinking.dropwizard.db.User;
+import com.controlledthinking.dropwizard.core.User;
 import io.dropwizard.hibernate.UnitOfWork;
 import java.util.List;
 import javax.ws.rs.GET;
@@ -30,9 +31,11 @@ import javax.ws.rs.core.MediaType;
 public class MessageGroupResource {
     
     private final MessageGroupDAO dao;
+    private final CustomerDAO custDao;
 
-    public MessageGroupResource(MessageGroupDAO dao) {
+    public MessageGroupResource(MessageGroupDAO dao, CustomerDAO custDao) {
         this.dao = dao;
+        this.custDao = custDao;
     }
     
     @PUT
@@ -52,9 +55,12 @@ public class MessageGroupResource {
     @UnitOfWork
     @Path("{groupId}/customers")
     public boolean addCustomerToGroup(@PathParam("groupId") int groupId, @QueryParam("customerId") int customerId) {
+        //Customer customer = custDao.getById(customerId);
+        MessageGroup mg = dao.getWithCustomers(groupId);
         Customer customer = new Customer();
         customer.setCustomerId(customerId);
-        dao.getById(groupId).getCustomerCollection().add(customer);
+        mg.getCustomerCollection().add(customer);
+        //customer.getMessageGroupCollection().add(mg);
         return true;
     }
 

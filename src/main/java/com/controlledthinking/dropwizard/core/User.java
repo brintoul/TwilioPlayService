@@ -3,11 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.controlledthinking.dropwizard.db;
+package com.controlledthinking.dropwizard.core;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.Set;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -32,6 +33,7 @@ import javax.xml.bind.annotation.XmlTransient;
 @NamedQueries({
     @NamedQuery(name = "User.findAll", query = "SELECT u FROM User u"),
     @NamedQuery(name = "User.findByUserId", query = "SELECT u FROM User u WHERE u.userId = :userId"),
+    @NamedQuery(name = "User.fetchAllCustomers", query = "SELECT u FROM User u JOIN FETCH u.customers cust WHERE u.userId = :userId"),
     @NamedQuery(name = "User.findByUsername", query = "SELECT u FROM User u WHERE u.username = :username")})
 public class User implements Serializable {
 
@@ -45,7 +47,9 @@ public class User implements Serializable {
     @Column(name = "username")
     private String username;
     @OneToMany(mappedBy = "user")
-    private Collection<PhoneNumber> phoneNumbersCollection;
+    private Set<PhoneNumber> phoneNumbersCollection;
+    @OneToMany(mappedBy = "user")
+    private Set<Customer> customers;
 
     public User() {
     }
@@ -76,8 +80,16 @@ public class User implements Serializable {
         return phoneNumbersCollection;
     }
 
-    public void setPhoneNumbersCollection(Collection<PhoneNumber> phoneNumbersCollection) {
+    public void setPhoneNumbersCollection(Set<PhoneNumber> phoneNumbersCollection) {
         this.phoneNumbersCollection = phoneNumbersCollection;
+    }
+
+    public Set<Customer> getCustomers() {
+        return customers;
+    }
+
+    public void setCustomers(Set<Customer> customers) {
+        this.customers = customers;
     }
 
     @Override
@@ -103,6 +115,5 @@ public class User implements Serializable {
     @Override
     public String toString() {
         return "com.controlledthinking.dropwizard.db.User[ userId=" + userId + " ]";
-    }
-    
+    }    
 }

@@ -6,13 +6,17 @@
 package com.controlledthinking.dropwizard.resources;
 
 import com.codahale.metrics.annotation.Timed;
-import com.controlledthinking.dropwizard.db.Customer;
+import com.controlledthinking.dropwizard.core.Customer;
 import com.controlledthinking.dropwizard.db.CustomerDAO;
-import com.controlledthinking.dropwizard.db.User;
+import com.controlledthinking.dropwizard.core.User;
+import com.controlledthinking.dropwizard.db.UserDAO;
 import io.dropwizard.hibernate.UnitOfWork;
+import java.util.Set;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
@@ -25,9 +29,11 @@ import javax.ws.rs.core.MediaType;
 public class CustomerResource {
 
     private final CustomerDAO dao;
+    private final UserDAO userDao;
 
-    public CustomerResource(CustomerDAO dao) {
+    public CustomerResource(CustomerDAO dao, UserDAO userDao) {
         this.dao = dao;
+        this.userDao = userDao;
     }
 
     @PUT
@@ -43,6 +49,13 @@ public class CustomerResource {
         return "created";
     }
      
-
-    
+    @GET
+    @Timed
+    @UnitOfWork
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/user/{userId}")
+    public Set<Customer> fetchAllForUser(@PathParam("userId") int userId) {
+        return userDao.fetchUserCustomers(userId);
+    }
+        
 }

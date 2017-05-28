@@ -8,7 +8,7 @@ package com.controlledthinking.dropwizard.resources;
 import com.codahale.metrics.annotation.Timed;
 import com.controlledthinking.dropwizard.api.PhoneNumberRepresentation;
 import com.controlledthinking.dropwizard.db.PhoneNumberDAO;
-import com.controlledthinking.dropwizard.db.PhoneNumber;
+import com.controlledthinking.dropwizard.core.PhoneNumber;
 import io.dropwizard.hibernate.UnitOfWork;
 import java.util.List;
 import java.util.Optional;

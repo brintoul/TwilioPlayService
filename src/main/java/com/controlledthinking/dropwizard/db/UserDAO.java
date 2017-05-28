@@ -6,30 +6,23 @@
 package com.controlledthinking.dropwizard.db;
 
 import com.controlledthinking.dropwizard.core.Customer;
+import com.controlledthinking.dropwizard.core.User;
 import io.dropwizard.hibernate.AbstractDAO;
-import java.util.List;
+import java.util.Set;
 import org.hibernate.SessionFactory;
 
 /**
  *
  * @author brintoul
  */
-public class CustomerDAO extends AbstractDAO<Customer> {
+public class UserDAO extends AbstractDAO<User> {
     
-    public CustomerDAO(SessionFactory sessionFactory) {
+    public UserDAO(SessionFactory sessionFactory) {
         super(sessionFactory);
     }
     
-    public Customer create(Customer customer) {
-        return persist(customer);
+    public Set<Customer> fetchUserCustomers(int userId) {
+        User theUser = uniqueResult(namedQuery("User.fetchAllCustomers").setParameter("userId", userId));
+        return theUser.getCustomers();
     }
-    
-    public Customer getById(int custId) {
-        return get(custId);
-    }
-    
-    public List<Customer> fetchForUser(int userId) {
-        return list(namedQuery("Customer.findByUser").setParameter("userId", userId));
-    }
-    
 }
