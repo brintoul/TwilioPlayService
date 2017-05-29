@@ -25,6 +25,8 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 /**
  *
@@ -38,7 +40,8 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Customer.findByCustomerId", query = "SELECT c FROM Customer c WHERE c.customerId = :customerId"),
     @NamedQuery(name = "Customer.findByFirstName", query = "SELECT c FROM Customer c WHERE c.firstName = :firstName"),
     @NamedQuery(name = "Customer.findByLastName", query = "SELECT c FROM Customer c WHERE c.lastName = :lastName"),
-    @NamedQuery(name = "Customer.findByUser", query = "SELECT c FROM Customer c WHERE c.user.userId = :userId"),    
+    @NamedQuery(name = "Customer.findByUser", query = "SELECT c FROM Customer c WHERE c.user.userId = :userId"), 
+    @NamedQuery(name = "Customer.findByGroup", query = "SELECT c FROM Customer c JOIN c.messageGroups groups WHERE groups.groupId = :groupId"),     
     @NamedQuery(name = "Customer.findByNumberText", query = "SELECT c FROM Customer c WHERE c.numberText = :numberText")
 })
 public class Customer implements Serializable {
@@ -59,6 +62,7 @@ public class Customer implements Serializable {
     private Set<MessageGroup> messageGroups;
     @JoinColumn(name = "user_id", referencedColumnName = "user_id")
     @ManyToOne(fetch=FetchType.LAZY, optional=false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private User user;
 
     public Customer() {

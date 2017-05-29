@@ -46,4 +46,10 @@ public class MessageGroupDAO extends AbstractDAO<MessageGroup> {
         return get(groupId);
     }
     
+    public boolean removeCustomerFromGroup(int customerId, int groupId) {
+        MessageGroup group = get(groupId);
+        group.getCustomerCollection().remove(new Customer(customerId));
+        return true;
+    }
+    
 }

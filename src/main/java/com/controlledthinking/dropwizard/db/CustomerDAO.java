@@ -6,7 +6,9 @@
 package com.controlledthinking.dropwizard.db;
 
 import com.controlledthinking.dropwizard.core.Customer;
+import com.controlledthinking.dropwizard.core.MessageGroup;
 import io.dropwizard.hibernate.AbstractDAO;
+import java.util.Collection;
 import java.util.List;
 import org.hibernate.SessionFactory;
 
@@ -30,6 +32,20 @@ public class CustomerDAO extends AbstractDAO<Customer> {
     
     public List<Customer> fetchForUser(int userId) {
         return list(namedQuery("Customer.findByUser").setParameter("userId", userId));
+    }
+
+    public List<Customer> fetchGroupCustomers(int groupId) {
+        return list(namedQuery("Customer.findByGroup").setParameter("groupId", groupId));
+    }
+
+    public boolean deleteCustomer(int customerId) {
+        Customer customer = get(customerId);
+        Collection<MessageGroup> groups = customer.getMessageGroupCollection();
+        groups.forEach((_item) -> {
+            groups.remove(customer);
+        });
+        currentSession().remove(customer);
+        return true;
     }
     
 }

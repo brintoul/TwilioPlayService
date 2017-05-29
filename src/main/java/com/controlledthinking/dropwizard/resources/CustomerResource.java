@@ -11,8 +11,10 @@ import com.controlledthinking.dropwizard.db.CustomerDAO;
 import com.controlledthinking.dropwizard.core.User;
 import com.controlledthinking.dropwizard.db.UserDAO;
 import io.dropwizard.hibernate.UnitOfWork;
+import java.util.List;
 import java.util.Set;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -58,4 +60,20 @@ public class CustomerResource {
         return userDao.fetchUserCustomers(userId);
     }
         
+    @GET
+    @Timed
+    @UnitOfWork
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/group/{groupId}")
+    public List<Customer> fetchAllForGroup(@PathParam("groupId") int groupId) {
+        return dao.fetchGroupCustomers(groupId);
+    }
+    
+    @DELETE
+    @Timed
+    @UnitOfWork
+    @Path("{customerId}")
+    public boolean deleteCustomer(@PathParam("customerId") int customerId) {
+        return dao.deleteCustomer(customerId);
+    }
 }

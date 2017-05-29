@@ -13,6 +13,7 @@ import com.controlledthinking.dropwizard.db.MessageGroupDAO;
 import com.controlledthinking.dropwizard.core.User;
 import io.dropwizard.hibernate.UnitOfWork;
 import java.util.List;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -60,7 +61,6 @@ public class MessageGroupResource {
         Customer customer = new Customer();
         customer.setCustomerId(customerId);
         mg.getCustomerCollection().add(customer);
-        //customer.getMessageGroupCollection().add(mg);
         return true;
     }
 
@@ -70,6 +70,14 @@ public class MessageGroupResource {
     @Path("/user/{userId}")
     public List<MessageGroup> getGroupsForUser(@PathParam("userId") int userId) {
         return dao.getAllForUser(userId);
+    }
+    
+    @DELETE
+    @Timed
+    @UnitOfWork
+    @Path("{groupId}/customers/{customerId}")
+    public boolean removeCustomerFromGroup(@PathParam("groupId") int groupId, @PathParam("customerId") int customerId) {
+        return dao.removeCustomerFromGroup(customerId, groupId);
     }
 
 }
