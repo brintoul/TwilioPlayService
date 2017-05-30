@@ -79,5 +79,13 @@ public class MessageGroupResource {
     public boolean removeCustomerFromGroup(@PathParam("groupId") int groupId, @PathParam("customerId") int customerId) {
         return dao.removeCustomerFromGroup(customerId, groupId);
     }
+    
+    @DELETE
+    @Timed
+    @UnitOfWork
+    @Path("{groupId}")
+    public boolean deleteGroup(@PathParam("groupId") int groupId) {
+        return dao.deleteGroup(groupId);
+    }
 
 }
