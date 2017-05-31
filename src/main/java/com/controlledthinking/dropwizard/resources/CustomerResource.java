@@ -6,6 +6,8 @@
 package com.controlledthinking.dropwizard.resources;
 
 import com.codahale.metrics.annotation.Timed;
+import com.controlledthinking.dropwizard.annotation.AuthRequired;
+import com.controlledthinking.dropwizard.beans.Privilege;
 import com.controlledthinking.dropwizard.core.Customer;
 import com.controlledthinking.dropwizard.db.CustomerDAO;
 import com.controlledthinking.dropwizard.core.User;
@@ -42,10 +44,7 @@ public class CustomerResource {
     @Timed
     @UnitOfWork
     @Consumes(MediaType.APPLICATION_JSON)
-    public String createCustomer(Customer customer) {
-        //TODO:  use real user
-        User user = new User();
-        user.setUserId(1);
+    public String createCustomer(@AuthRequired(Privilege.USER) User user, Customer customer) {
         customer.setUser(user);
         dao.create(customer);
         return "created";
@@ -56,8 +55,8 @@ public class CustomerResource {
     @UnitOfWork
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/user/{userId}")
-    public Set<Customer> fetchAllForUser(@PathParam("userId") int userId) {
-        return userDao.fetchUserCustomers(userId);
+    public Set<Customer> fetchAllForUser(@AuthRequired(Privilege.USER) User user) {
+        return userDao.fetchUserCustomers(user.getUserId());
     }
         
     @GET
@@ -65,7 +64,7 @@ public class CustomerResource {
     @UnitOfWork
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/group/{groupId}")
-    public List<Customer> fetchAllForGroup(@PathParam("groupId") int groupId) {
+    public List<Customer> fetchAllForGroup(@AuthRequired(Privilege.USER) User user, @PathParam("groupId") int groupId) {
         return dao.fetchGroupCustomers(groupId);
     }
     
@@ -73,7 +72,7 @@ public class CustomerResource {
     @Timed
     @UnitOfWork
     @Path("{customerId}")
-    public boolean deleteCustomer(@PathParam("customerId") int customerId) {
+    public boolean deleteCustomer(@AuthRequired(Privilege.USER) User user, @PathParam("customerId") int customerId) {
         return dao.deleteCustomer(customerId);
     }
 }

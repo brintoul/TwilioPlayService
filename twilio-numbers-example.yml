@@ -21,3 +21,5 @@ server:
   applicationConnectors:
     - type: http
       port: <PORT> 
+authSalt: <AUTH-SALT>
+authHeader: X-auth

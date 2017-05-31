@@ -58,6 +58,8 @@ public class Customer implements Serializable {
     private String lastName;
     @Column(name = "number_text")
     private String numberText;
+    @Column(name = "specific_id_for_user")
+    private String reservedSpecificId;
     @ManyToMany(mappedBy = "customerCollection", fetch=FetchType.LAZY)
     private Set<MessageGroup> messageGroups;
     @JoinColumn(name = "user_id", referencedColumnName = "user_id")
@@ -105,6 +107,14 @@ public class Customer implements Serializable {
 
     public void setNumberText(String numberText) {
         this.numberText = numberText;
+    }
+
+    public String getReservedSpecificId() {
+        return reservedSpecificId;
+    }
+
+    public void setReservedSpecificId(String reservedSpecificId) {
+        this.reservedSpecificId = reservedSpecificId;
     }
 
     @XmlTransient

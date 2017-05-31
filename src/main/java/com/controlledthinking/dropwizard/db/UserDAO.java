@@ -25,4 +25,10 @@ public class UserDAO extends AbstractDAO<User> {
         User theUser = uniqueResult(namedQuery("User.fetchAllCustomers").setParameter("userId", userId));
         return theUser.getCustomers();
     }
+    
+    public String fetchUsernamePasswordHash(String username) {
+        User theUser = uniqueResult(namedQuery("User.findByUsername").setParameter("username", username));        
+        return theUser.getPassword();
+    }
+    
 }

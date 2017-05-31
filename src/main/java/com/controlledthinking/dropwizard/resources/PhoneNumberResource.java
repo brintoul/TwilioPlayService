@@ -6,9 +6,13 @@
 package com.controlledthinking.dropwizard.resources;
 
 import com.codahale.metrics.annotation.Timed;
+import com.controlledthinking.dropwizard.annotation.AuthRequired;
 import com.controlledthinking.dropwizard.api.PhoneNumberRepresentation;
+import com.controlledthinking.dropwizard.beans.Privilege;
 import com.controlledthinking.dropwizard.db.PhoneNumberDAO;
 import com.controlledthinking.dropwizard.core.PhoneNumber;
+import com.controlledthinking.dropwizard.core.User;
+import io.dropwizard.auth.Auth;
 import io.dropwizard.hibernate.UnitOfWork;
 import java.util.List;
 import java.util.Optional;
@@ -36,7 +40,7 @@ public class PhoneNumberResource {
     @GET
     @Timed
     @UnitOfWork
-    public PhoneNumberRepresentation retrieveNumbers(@QueryParam("name") Optional<String> name) {
+    public PhoneNumberRepresentation retrieveNumbers(@AuthRequired(Privilege.USER) User user, @QueryParam("name") Optional<String> name) {
         return new PhoneNumberRepresentation(11, dao.findAll().get(0).getNumberText());
     }
      
@@ -44,7 +48,7 @@ public class PhoneNumberResource {
     @Timed
     @UnitOfWork
     @Path("/user/{userId}")
-    public List<PhoneNumber> retrieveNumbersForUser(@PathParam("userId") Integer userId) {
+    public List<PhoneNumber> retrieveNumbersForUser(@AuthRequired(Privilege.USER) User user, @PathParam("userId") Integer userId) {
         return dao.findByUserId(userId);
     }
 }

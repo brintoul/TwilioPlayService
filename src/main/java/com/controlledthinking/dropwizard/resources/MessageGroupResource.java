@@ -6,6 +6,8 @@
 package com.controlledthinking.dropwizard.resources;
 
 import com.codahale.metrics.annotation.Timed;
+import com.controlledthinking.dropwizard.annotation.AuthRequired;
+import com.controlledthinking.dropwizard.beans.Privilege;
 import com.controlledthinking.dropwizard.core.Customer;
 import com.controlledthinking.dropwizard.db.CustomerDAO;
 import com.controlledthinking.dropwizard.core.MessageGroup;
@@ -42,10 +44,7 @@ public class MessageGroupResource {
     @PUT
     @Timed
     @UnitOfWork
-    public boolean createGroup(MessageGroup group) {
-        //TODO:  use real user
-        User user = new User();
-        user.setUserId(1);
+    public boolean createGroup(@AuthRequired(Privilege.USER) User user, MessageGroup group) {
         group.setUser(user);
         dao.persist(group);
         return true;
@@ -55,8 +54,7 @@ public class MessageGroupResource {
     @Timed
     @UnitOfWork
     @Path("{groupId}/customers")
-    public boolean addCustomerToGroup(@PathParam("groupId") int groupId, @QueryParam("customerId") int customerId) {
-        //Customer customer = custDao.getById(customerId);
+    public boolean addCustomerToGroup(@AuthRequired(Privilege.USER) User user, @PathParam("groupId") int groupId, @QueryParam("customerId") int customerId) {
         MessageGroup mg = dao.getWithCustomers(groupId);
         Customer customer = new Customer();
         customer.setCustomerId(customerId);
@@ -68,15 +66,15 @@ public class MessageGroupResource {
     @Timed
     @UnitOfWork
     @Path("/user/{userId}")
-    public List<MessageGroup> getGroupsForUser(@PathParam("userId") int userId) {
-        return dao.getAllForUser(userId);
+    public List<MessageGroup> getGroupsForUser(@AuthRequired(Privilege.USER) User user) {
+        return dao.getAllForUser(user.getUserId());
     }
     
     @DELETE
     @Timed
     @UnitOfWork
     @Path("{groupId}/customers/{customerId}")
-    public boolean removeCustomerFromGroup(@PathParam("groupId") int groupId, @PathParam("customerId") int customerId) {
+    public boolean removeCustomerFromGroup(@AuthRequired(Privilege.USER) User user, @PathParam("groupId") int groupId, @PathParam("customerId") int customerId) {
         return dao.removeCustomerFromGroup(customerId, groupId);
     }
     
@@ -84,7 +82,7 @@ public class MessageGroupResource {
     @Timed
     @UnitOfWork
     @Path("{groupId}")
-    public boolean deleteGroup(@PathParam("groupId") int groupId) {
+    public boolean deleteGroup(@AuthRequired(Privilege.USER) User user, @PathParam("groupId") int groupId) {
         return dao.deleteGroup(groupId);
     }
 
