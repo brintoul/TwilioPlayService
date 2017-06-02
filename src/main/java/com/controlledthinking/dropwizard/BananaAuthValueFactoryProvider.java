@@ -7,6 +7,7 @@ package com.controlledthinking.dropwizard;
 
 import com.controlledthinking.dropwizard.annotation.AuthRequired;
 import com.controlledthinking.dropwizard.core.User;
+import com.controlledthinking.dropwizard.core.UserDTO;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import org.glassfish.hk2.api.InjectionResolver;
@@ -38,15 +39,14 @@ public class BananaAuthValueFactoryProvider extends AbstractValueFactoryProvider
     protected AbstractContainerRequestValueFactory<?> createValueFactory(Parameter parameter)
     {
         if (parameter.isAnnotationPresent(AuthRequired.class)) {
-            return new AbstractContainerRequestValueFactory<User>()
+            return new AbstractContainerRequestValueFactory<UserDTO>()
             {
                 @Override
-                public User provide()
+                public UserDTO provide()
                 {
                     final Object userObject = getContainerRequest().getProperty("user");
-                    System.out.println("The USER OBJECT: " + userObject);
-                    if (userObject != null && userObject instanceof User) {
-                        return (User) userObject;
+                    if (userObject != null && userObject instanceof UserDTO) {
+                        return (UserDTO) userObject;
                     } else {
                         return null;
                     }

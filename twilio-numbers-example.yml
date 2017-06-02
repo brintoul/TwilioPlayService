@@ -23,3 +23,10 @@ server:
       port: <PORT> 
 authSalt: <AUTH-SALT>
 authHeader: X-auth
+aws:
+  sqs-region-url: sqs.us-west-1.amazonaws.com
+  sqs-region: us-west-1
+  accessKey:  AKIAIENHPCNXJMEJGA7Q
+  secretKey:  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
+  username:  sqs-user
+

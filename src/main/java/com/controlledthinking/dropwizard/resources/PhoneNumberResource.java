@@ -11,8 +11,7 @@ import com.controlledthinking.dropwizard.api.PhoneNumberRepresentation;
 import com.controlledthinking.dropwizard.beans.Privilege;
 import com.controlledthinking.dropwizard.db.PhoneNumberDAO;
 import com.controlledthinking.dropwizard.core.PhoneNumber;
-import com.controlledthinking.dropwizard.core.User;
-import io.dropwizard.auth.Auth;
+import com.controlledthinking.dropwizard.core.UserDTO;
 import io.dropwizard.hibernate.UnitOfWork;
 import java.util.List;
 import java.util.Optional;
@@ -40,15 +39,16 @@ public class PhoneNumberResource {
     @GET
     @Timed
     @UnitOfWork
-    public PhoneNumberRepresentation retrieveNumbers(@AuthRequired(Privilege.USER) User user, @QueryParam("name") Optional<String> name) {
+    public PhoneNumberRepresentation retrieveNumbers(@AuthRequired(Privilege.USER) UserDTO user, @QueryParam("name") Optional<String> name) {
         return new PhoneNumberRepresentation(11, dao.findAll().get(0).getNumberText());
     }
      
     @GET
     @Timed
     @UnitOfWork
-    @Path("/user/{userId}")
-    public List<PhoneNumber> retrieveNumbersForUser(@AuthRequired(Privilege.USER) User user, @PathParam("userId") Integer userId) {
-        return dao.findByUserId(userId);
+    @Path("/user")
+    public List<PhoneNumber> retrieveNumbersForUser(@AuthRequired(Privilege.USER) UserDTO user) {
+        System.out.println("The User: " + user.toString());
+        return dao.findByUserId(user.getUserId());
     }
 }

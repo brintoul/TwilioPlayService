@@ -13,7 +13,8 @@ public class TwilioPhoneNumberConfiguration extends Configuration {
     private String authSalt;
     @NotNull
     private String authHeader;
-
+    private BananaAwsConfiguration awsConfiguration;
+    
     public String getAuthHeader() {
         return authHeader;
     }
@@ -37,5 +38,14 @@ public class TwilioPhoneNumberConfiguration extends Configuration {
     @JsonProperty("database")
     public void setDataSourceFactory(DataSourceFactory factory) {
         this.database = factory;
+    }
+    
+    @JsonProperty("aws")
+    public void setAwsConfiguration(BananaAwsConfiguration bAws) {
+        this.awsConfiguration = bAws;
+    }
+    
+    public BananaAwsConfiguration getAwsConfiguration() {
+        return this.awsConfiguration;
     }
 }

@@ -11,6 +11,7 @@ import com.controlledthinking.dropwizard.beans.Privilege;
 import com.controlledthinking.dropwizard.core.Customer;
 import com.controlledthinking.dropwizard.db.CustomerDAO;
 import com.controlledthinking.dropwizard.core.User;
+import com.controlledthinking.dropwizard.core.UserDTO;
 import com.controlledthinking.dropwizard.db.UserDAO;
 import io.dropwizard.hibernate.UnitOfWork;
 import java.util.List;
@@ -44,8 +45,8 @@ public class CustomerResource {
     @Timed
     @UnitOfWork
     @Consumes(MediaType.APPLICATION_JSON)
-    public String createCustomer(@AuthRequired(Privilege.USER) User user, Customer customer) {
-        customer.setUser(user);
+    public String createCustomer(@AuthRequired(Privilege.USER) UserDTO user, Customer customer) {
+        customer.setUser(new User(user.getUserId()) );
         dao.create(customer);
         return "created";
     }
@@ -54,8 +55,8 @@ public class CustomerResource {
     @Timed
     @UnitOfWork
     @Produces(MediaType.APPLICATION_JSON)
-    @Path("/user/{userId}")
-    public Set<Customer> fetchAllForUser(@AuthRequired(Privilege.USER) User user) {
+    @Path("/user")
+    public Set<Customer> fetchAllForUser(@AuthRequired(Privilege.USER) UserDTO user) {
         return userDao.fetchUserCustomers(user.getUserId());
     }
         
@@ -64,7 +65,7 @@ public class CustomerResource {
     @UnitOfWork
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/group/{groupId}")
-    public List<Customer> fetchAllForGroup(@AuthRequired(Privilege.USER) User user, @PathParam("groupId") int groupId) {
+    public List<Customer> fetchAllForGroup(@AuthRequired(Privilege.USER) UserDTO user, @PathParam("groupId") int groupId) {
         return dao.fetchGroupCustomers(groupId);
     }
     
@@ -72,7 +73,7 @@ public class CustomerResource {
     @Timed
     @UnitOfWork
     @Path("{customerId}")
-    public boolean deleteCustomer(@AuthRequired(Privilege.USER) User user, @PathParam("customerId") int customerId) {
+    public boolean deleteCustomer(@AuthRequired(Privilege.USER) UserDTO user, @PathParam("customerId") int customerId) {
         return dao.deleteCustomer(customerId);
     }
 }

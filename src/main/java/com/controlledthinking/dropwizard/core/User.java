@@ -53,6 +53,7 @@ public class User implements Principal, Serializable {
     private String username;
     @Size(max = 64)
     //TODO: DO NOT STORE IN CLEAR!!
+    @JsonIgnore
     @Column(name = "password")
     private String password;
     @OneToMany(mappedBy = "user")
@@ -60,9 +61,10 @@ public class User implements Principal, Serializable {
     @JsonIgnore
     private Set<PhoneNumber> phoneNumbersCollection;
     @OneToMany(mappedBy = "user")
+    @JsonIgnore
     private Set<Customer> customers;
     @Transient
-    private HashSet<Privilege> privileges;
+    private Set<Privilege> privileges;
     
     public User() {
     }
@@ -71,7 +73,8 @@ public class User implements Principal, Serializable {
         this.userId = userId;
     }
 
-    public User(String username, HashSet<Privilege> privileges) {
+    public User(String username, Set<Privilege> privileges) {
+        this.username = username;
         this.privileges = privileges;
     }
 
@@ -116,7 +119,9 @@ public class User implements Principal, Serializable {
     }
 
     public Set<Privilege> getPrivileges() {
-        return this.privileges;
+        Set priv = new HashSet<Privilege>();
+        priv.add(Privilege.USER);
+        return priv;
     }
 
     @Override

@@ -7,7 +7,7 @@ package com.controlledthinking.dropwizard;
 
 import com.controlledthinking.dropwizard.annotation.AuthRequired;
 import com.controlledthinking.dropwizard.beans.Privilege;
-import com.controlledthinking.dropwizard.core.User;
+import com.controlledthinking.dropwizard.core.UserDTO;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.stream.Stream;
@@ -26,10 +26,10 @@ import jwt4j.JWTHandler;
 public class BananaAuthDynamicFeature implements DynamicFeature {
     
     private final TwilioPhoneNumberConfiguration configuration;
-    private final JWTHandler<User> jwtHandler;
+    private final JWTHandler<UserDTO> jwtHandler;
 
     public BananaAuthDynamicFeature(final TwilioPhoneNumberConfiguration configuration,
-                              final JWTHandler<User> jwtHandler)
+                              final JWTHandler<UserDTO> jwtHandler)
     {
         this.configuration = configuration;
         this.jwtHandler = jwtHandler;
@@ -56,7 +56,7 @@ public class BananaAuthDynamicFeature implements DynamicFeature {
             if (authHeader == null) {
                 throw new WebApplicationException(Response.Status.UNAUTHORIZED);
             }
-            final User user;
+            final UserDTO user;
             try {
                 user = jwtHandler.decode(authHeader);
             } catch (Exception e) {
