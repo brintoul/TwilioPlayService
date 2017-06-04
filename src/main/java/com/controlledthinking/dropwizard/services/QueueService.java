@@ -10,6 +10,6 @@ package com.controlledthinking.dropwizard.services;
  * @author brintoul
  */
 public interface QueueService {
-    public boolean sendMessageToQueue();
+    public boolean sendMessageToQueue(Object message);
     public void setupQueue();
 }

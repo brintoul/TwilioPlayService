@@ -16,7 +16,12 @@ import com.amazonaws.services.sqs.AmazonSQS;
 import com.amazonaws.services.sqs.AmazonSQSClientBuilder;
 import com.amazonaws.services.sqs.model.CreateQueueRequest;
 import com.amazonaws.services.sqs.model.ListQueuesResult;
+import com.amazonaws.services.sqs.model.SendMessageRequest;
 import com.controlledthinking.dropwizard.BananaAwsConfiguration;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class AwsQueueService implements QueueService {
 
@@ -45,8 +50,18 @@ public class AwsQueueService implements QueueService {
     }
     
     @Override
-    public boolean sendMessageToQueue() {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public boolean sendMessageToQueue(Object messageBody) {
+        try {
+            ObjectMapper mapperObj = new ObjectMapper();        
+            AmazonSQS client = builder.build();
+            SendMessageRequest sendMessageRequest = new SendMessageRequest();
+                sendMessageRequest.setMessageBody(mapperObj.writeValueAsString(messageBody));
+            client.sendMessage(sendMessageRequest);
+            return true;
+        } catch (JsonProcessingException ex) {
+            Logger.getLogger(AwsQueueService.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
     }
     
     @Override

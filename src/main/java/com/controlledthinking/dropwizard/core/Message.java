@@ -13,6 +13,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
+import javax.persistence.MappedSuperclass;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
@@ -22,12 +23,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  *
  * @author brintoul
  */
-@Entity
-@Table(name = "message")
-@XmlRootElement
-@NamedQueries({
-    @NamedQuery(name = "Message.findAll", query = "SELECT m FROM Message m")
-    , @NamedQuery(name = "Message.findByMessageId", query = "SELECT m FROM Message m WHERE m.messageId = :messageId")})
+@MappedSuperclass
 public class Message implements Serializable {
 
     private static final long serialVersionUID = 1L;
