@@ -7,9 +7,9 @@ package com.controlledthinking.dropwizard.resources;
 
 import com.codahale.metrics.annotation.Timed;
 import com.controlledthinking.dropwizard.annotation.AuthRequired;
-import com.controlledthinking.dropwizard.core.Customer;
 import com.controlledthinking.dropwizard.core.CustomerImmediateMessage;
 import com.controlledthinking.dropwizard.core.UserDTO;
+import com.controlledthinking.dropwizard.db.CustomerDAO;
 import com.controlledthinking.dropwizard.db.MessageDAO;
 import com.controlledthinking.dropwizard.services.QueueService;
 import io.dropwizard.hibernate.UnitOfWork;
@@ -29,10 +29,12 @@ public class ImmediateMessageResource {
 
     private QueueService queueService;
     private MessageDAO dao;
+    private CustomerDAO custDao;
     
-    public ImmediateMessageResource(QueueService qservice, MessageDAO dao) {
+    public ImmediateMessageResource(QueueService qservice, MessageDAO dao, CustomerDAO custDao) {
         this.queueService = qservice;
         this.dao = dao;
+        this.custDao = custDao;
     }
     
     @PUT
@@ -40,8 +42,11 @@ public class ImmediateMessageResource {
     @Timed
     @Path("/customer/{customerId}")
     public boolean sendMessageToCustomer(@AuthRequired UserDTO user, @PathParam("customerId") int customerId, CustomerImmediateMessage message) {
-        message.setCustomer(new Customer(customerId));
+        //TODO: HANDLE DB ERRORS HERE - PROBABLY IN LOTS OF PLACES, REALLY
+        message.setCustomer(custDao.getById(customerId));
         dao.persist(message);
-        return true;
+        boolean sentSuccess = queueService.sendMessageToQueue(message);
+        //TODO: ADD 'SENT' BIT TO MESSAGE TABLE
+        return sentSuccess;
     }
 }

@@ -15,6 +15,7 @@ import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.services.sqs.AmazonSQS;
 import com.amazonaws.services.sqs.AmazonSQSClientBuilder;
 import com.amazonaws.services.sqs.model.CreateQueueRequest;
+import com.amazonaws.services.sqs.model.ListQueuesRequest;
 import com.amazonaws.services.sqs.model.ListQueuesResult;
 import com.amazonaws.services.sqs.model.SendMessageRequest;
 import com.controlledthinking.dropwizard.BananaAwsConfiguration;
@@ -29,6 +30,8 @@ public class AwsQueueService implements QueueService {
     private static AWSStaticCredentialsProvider credentialsProvider;
     private static AwsClientBuilder.EndpointConfiguration epc;
     private static AmazonSQSClientBuilder builder;
+    private String queueUrl = "";
+    private Logger log = Logger.getLogger(AwsQueueService.class.getName());
 
     public static BananaAwsConfiguration getConfiguration() {
         return configuration;
@@ -55,11 +58,12 @@ public class AwsQueueService implements QueueService {
             ObjectMapper mapperObj = new ObjectMapper();        
             AmazonSQS client = builder.build();
             SendMessageRequest sendMessageRequest = new SendMessageRequest();
-                sendMessageRequest.setMessageBody(mapperObj.writeValueAsString(messageBody));
+            sendMessageRequest.withQueueUrl(this.queueUrl);
+            sendMessageRequest.withMessageBody(mapperObj.writeValueAsString(messageBody));
             client.sendMessage(sendMessageRequest);
             return true;
         } catch (JsonProcessingException ex) {
-            Logger.getLogger(AwsQueueService.class.getName()).log(Level.SEVERE, null, ex);
+            log.severe(ex.toString());
             return false;
         }
     }
@@ -68,14 +72,19 @@ public class AwsQueueService implements QueueService {
     public void setupQueue() {
         
         AmazonSQS client = builder.build();
-        ListQueuesResult result = client.listQueues();
+        ListQueuesRequest req = new ListQueuesRequest(configuration.getQueueInfo().get("immediateQueueName"));
+        ListQueuesResult result = client.listQueues(req);
         if(result.getQueueUrls().isEmpty()) {
             //TODO:  ADD LOGGING - IN FACT, ADD LOGGING EVERYWHERE
+            log.log(Level.INFO, "Creating queue for " + configuration.getQueueInfo().get("immediateQueueName"));
             CreateQueueRequest createQueueReq = new CreateQueueRequest();
             createQueueReq.setQueueName(configuration.getQueueInfo().get("immediateQueueName"));
             client.createQueue(createQueueReq);
         } else {
-            result.getQueueUrls().forEach(item -> System.out.println(item));
+            if(result.getQueueUrls().size() > 1 ) {
+                log.log(Level.WARNING, "More than one queue URL returned.");
+            }
+            this.queueUrl = result.getQueueUrls().get(0);        
         }
     }
     

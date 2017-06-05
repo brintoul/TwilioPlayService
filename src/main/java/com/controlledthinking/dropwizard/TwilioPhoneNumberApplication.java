@@ -89,7 +89,7 @@ public class TwilioPhoneNumberApplication extends Application<TwilioPhoneNumberC
                 new PhoneNumberResource(dao),
                 new CustomerResource(custDao, userDao),
                 new MessageGroupResource(groupDao, custDao),
-                new ImmediateMessageResource(queueService, messageDao),
+                new ImmediateMessageResource(queueService, messageDao, custDao),
                 new BananaAuthDynamicFeature(configuration, jwtHandler),
                 new BananaAuthValueFactoryProvider.Binder())
             .forEach(jerseyEnvironment::register);

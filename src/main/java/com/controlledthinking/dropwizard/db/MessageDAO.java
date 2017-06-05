@@ -22,7 +22,7 @@ public class MessageDAO extends AbstractDAO<CustomerImmediateMessage> {
     }
     
     @Override
-    public CustomerImmediateMessage persist(CustomerImmediateMessage entity) throws HibernateException {
+    public CustomerImmediateMessage persist(CustomerImmediateMessage entity) throws HibernateException {        
         return super.persist(entity); 
     }
 
