@@ -33,6 +33,8 @@ public class CustomerImmediateMessage extends Message {
     private Customer customer;
     @Transient
     private String phoneNumberText;
+    @Transient
+    private String sendingNumberText;
 
     @JsonIgnore
     public Customer getCustomer() {
@@ -49,5 +51,13 @@ public class CustomerImmediateMessage extends Message {
 
     public void setPhoneNumberText(String phoneNumberText) {
         this.customer.setNumberText(phoneNumberText);
+    }
+
+    public String getSendingNumberText() {
+        return sendingNumberText;
+    }
+
+    public void setSendingNumberText(String sendingNumberText) {
+        this.sendingNumberText = sendingNumberText;
     }
 }

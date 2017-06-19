@@ -16,7 +16,7 @@ import com.controlledthinking.dropwizard.db.UserDAO;
 import com.controlledthinking.dropwizard.resources.CustomerResource;
 import com.controlledthinking.dropwizard.resources.ImmediateMessageResource;
 import com.controlledthinking.dropwizard.resources.MessageGroupResource;
-import com.controlledthinking.dropwizard.services.AwsQueueService;
+import com.controlledthinking.dropwizard.services.AwsNotificationService;
 import com.controlledthinking.dropwizard.services.QueueService;
 import io.dropwizard.Application;
 import io.dropwizard.db.DataSourceFactory;
@@ -60,17 +60,19 @@ public class TwilioPhoneNumberApplication extends Application<TwilioPhoneNumberC
         bootstrap.addBundle(hibernate);
     }
     
-    private JWTHandler<UserDTO> getJwtHandler(TwilioPhoneNumberConfiguration configuration)
-    {
+    private JWTHandler<UserDTO> getJwtHandler(TwilioPhoneNumberConfiguration configuration) {
+        log.info("Creating JWT handler with expiration of %d seconds", configuration.getSessionExpiration());
         return new JWTHandlerBuilder<UserDTO>()
                 .withSecret(configuration.getAuthSalt().getBytes())
                 .withDataClass(UserDTO.class)
+                .withExpirationSeconds(configuration.getSessionExpiration()) //expiration in seconds
                 .build();
     }
     
     @Override
     public void run(final TwilioPhoneNumberConfiguration configuration,
                     final Environment environment) {
+        log.info("Creating DAOs and the JWT handler");
         final PhoneNumberDAO dao = new PhoneNumberDAO(hibernate.getSessionFactory());
         final CustomerDAO custDao = new CustomerDAO(hibernate.getSessionFactory());
         final MessageGroupDAO groupDao = new MessageGroupDAO(hibernate.getSessionFactory());
@@ -79,7 +81,8 @@ public class TwilioPhoneNumberApplication extends Application<TwilioPhoneNumberC
         final JWTHandler<UserDTO> jwtHandler = getJwtHandler(configuration);
         
         //TODO:  THIS WILL HAVE TO FIND A NEW HOME.  PUT IT HERE FOR NOW.
-        QueueService queueService = new AwsQueueService(configuration.getAwsConfiguration());
+        log.info("Setting up the AWS SNS");
+        QueueService queueService = new AwsNotificationService(configuration.getAwsConfiguration());
         queueService.setupQueue();
         
         log.info("About to register the resources with Jersey");
@@ -89,7 +92,7 @@ public class TwilioPhoneNumberApplication extends Application<TwilioPhoneNumberC
                 new PhoneNumberResource(dao),
                 new CustomerResource(custDao, userDao),
                 new MessageGroupResource(groupDao, custDao),
-                new ImmediateMessageResource(queueService, messageDao, custDao),
+                new ImmediateMessageResource(queueService, messageDao, custDao, groupDao),
                 new BananaAuthDynamicFeature(configuration, jwtHandler),
                 new BananaAuthValueFactoryProvider.Binder())
             .forEach(jerseyEnvironment::register);

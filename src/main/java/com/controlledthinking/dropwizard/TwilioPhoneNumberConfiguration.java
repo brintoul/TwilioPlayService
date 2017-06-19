@@ -13,6 +13,9 @@ public class TwilioPhoneNumberConfiguration extends Configuration {
     private String authSalt;
     @NotNull
     private String authHeader;
+    @NotNull
+    private Integer sessionExpiration;
+
     private BananaAwsConfiguration awsConfiguration;
     
     public String getAuthHeader() {
@@ -31,6 +34,13 @@ public class TwilioPhoneNumberConfiguration extends Configuration {
         this.authSalt = authSalt;
     }
 
+    public Integer getSessionExpiration() {
+        return sessionExpiration;
+    }
+
+    public void setSessionExpiration(Integer sessionExpiration) {
+        this.sessionExpiration = sessionExpiration;
+    }
     public DataSourceFactory getDataSourceFactory() {
         return database;
     }

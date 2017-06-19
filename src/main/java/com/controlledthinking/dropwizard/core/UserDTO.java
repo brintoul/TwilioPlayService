@@ -16,10 +16,12 @@ public class UserDTO {
     
     private int userId;
     private Set<Privilege> privileges;
+    private String phoneNumberText;
 
-    public UserDTO(Integer userId, Set<Privilege> privileges) {
+    public UserDTO(Integer userId, Set<Privilege> privileges, String phoneNumberToUse) {
         this.userId = userId;
         this.privileges = privileges;
+        this.phoneNumberText = phoneNumberToUse;
     }
 
     public int getUserId() {
@@ -36,6 +38,14 @@ public class UserDTO {
 
     public void setPrivileges(Set<Privilege> privileges) {
         this.privileges = privileges;
+    }
+
+    public String getPhoneNumberText() {
+        return phoneNumberText;
+    }
+
+    public void setPhoneNumberText(String phoneNumberText) {
+        this.phoneNumberText = phoneNumberText;
     }
 
     @Override

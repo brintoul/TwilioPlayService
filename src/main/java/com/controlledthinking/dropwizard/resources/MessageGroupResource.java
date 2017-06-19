@@ -24,7 +24,9 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response.Status;
 
 /**
  *
@@ -57,8 +59,10 @@ public class MessageGroupResource {
     @Path("{groupId}/customers")
     public boolean addCustomerToGroup(@AuthRequired(Privilege.USER) UserDTO user, @PathParam("groupId") int groupId, @QueryParam("customerId") int customerId) {
         MessageGroup mg = dao.getWithCustomers(groupId);
-        Customer customer = new Customer();
-        customer.setCustomerId(customerId);
+        Customer customer = custDao.getById(customerId);
+        if( customer.getUser().getUserId() != user.getUserId()) {
+            throw new WebApplicationException(Status.FORBIDDEN);
+        }
         mg.getCustomerCollection().add(customer);
         return true;
     }
@@ -84,6 +88,10 @@ public class MessageGroupResource {
     @UnitOfWork
     @Path("{groupId}")
     public boolean deleteGroup(@AuthRequired(Privilege.USER) UserDTO user, @PathParam("groupId") int groupId) {
+        MessageGroup theGroup = dao.getById(groupId);
+        if(theGroup.getUser().getUserId() != user.getUserId()) {
+            throw new WebApplicationException(Status.FORBIDDEN);
+        }
         return dao.deleteGroup(groupId);
     }
 

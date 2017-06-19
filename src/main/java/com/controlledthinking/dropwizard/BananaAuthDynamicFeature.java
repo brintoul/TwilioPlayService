@@ -18,6 +18,8 @@ import javax.ws.rs.container.ResourceInfo;
 import javax.ws.rs.core.FeatureContext;
 import javax.ws.rs.core.Response;
 import jwt4j.JWTHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -25,6 +27,7 @@ import jwt4j.JWTHandler;
  */
 public class BananaAuthDynamicFeature implements DynamicFeature {
     
+    private final Logger log = LoggerFactory.getLogger(getClass());
     private final TwilioPhoneNumberConfiguration configuration;
     private final JWTHandler<UserDTO> jwtHandler;
 
@@ -56,10 +59,19 @@ public class BananaAuthDynamicFeature implements DynamicFeature {
             if (authHeader == null) {
                 throw new WebApplicationException(Response.Status.UNAUTHORIZED);
             }
+            String[] authParts = authHeader.split(" ");
+            String jwtString = "";
+            if( !authParts[0].trim().equals("Bearer")) {
+                log.info("Bearer not found in auth header.");
+                throw new WebApplicationException(Response.Status.UNAUTHORIZED);
+            } else {
+                jwtString = authParts[1].trim();
+            }
             final UserDTO user;
             try {
-                user = jwtHandler.decode(authHeader);
+                user = jwtHandler.decode(jwtString);
             } catch (Exception e) {
+                log.info("Failed to decode JWT.  Exception: " + e.getMessage());
                 throw new WebApplicationException(Response.Status.UNAUTHORIZED);
             }
             if (!user.getPrivileges().containsAll(Arrays.asList(requiredPrivileges))) {

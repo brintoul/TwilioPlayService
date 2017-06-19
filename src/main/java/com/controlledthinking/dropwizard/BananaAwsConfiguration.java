@@ -16,8 +16,8 @@ public class BananaAwsConfiguration {
     private String accessKey;
     private String secretKey;
     private String username;
-    private String sqsRegionUrl;
-    private String sqsRegion;
+    private String snsRegionUrl;
+    private String snsRegion;
     private Map<String, String> queueInfo;
 
     public Map<String, String> getQueueInfo() {
@@ -52,19 +52,19 @@ public class BananaAwsConfiguration {
         this.username = username;
     }
 
-    public String getSqsRegionUrl() {
-        return sqsRegionUrl;
+    public String getSnsRegionUrl() {
+        return snsRegionUrl;
     }
 
-    public void setSqsRegionUrl(String sqsRegionUrl) {
-        this.sqsRegionUrl = sqsRegionUrl;
+    public void setSnsRegionUrl(String snsRegionUrl) {
+        this.snsRegionUrl = snsRegionUrl;
     }
 
-    public String getSqsRegion() {
-        return sqsRegion;
+    public String getSnsRegion() {
+        return snsRegion;
     }
 
-    public void setSqsRegion(String sqsRegion) {
-        this.sqsRegion = sqsRegion;
+    public void setSnsRegion(String sqsRegion) {
+        this.snsRegion = sqsRegion;
     }
 }

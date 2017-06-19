@@ -5,19 +5,17 @@
  */
 package com.controlledthinking.dropwizard.core;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
 import javax.persistence.Basic;
 import javax.persistence.Column;
-import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.Table;
-import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
@@ -35,6 +33,11 @@ public class Message implements Serializable {
     @Lob
     @Column(name = "message_text")
     private String messageText;
+    @Column(name = "sent")
+    private boolean sent;
+    @ManyToOne
+    @JoinColumn(name = "number_id", referencedColumnName = "phone_number_id")
+    private PhoneNumber originatingNumber;
 
     public Message() {
     }
@@ -59,6 +62,23 @@ public class Message implements Serializable {
         this.messageText = messageText;
     }
 
+    @JsonIgnore
+    public boolean isSent() {
+        return sent;
+    }
+
+    public void setSent(boolean sent) {
+        this.sent = sent;
+    }
+
+    public PhoneNumber getOriginatingNumber() {
+        return originatingNumber;
+    }
+
+    public void setOriginatingNumber(PhoneNumber originatingNumber) {
+        this.originatingNumber = originatingNumber;
+    }
+    
     @Override
     public int hashCode() {
         int hash = 0;
@@ -83,5 +103,5 @@ public class Message implements Serializable {
     public String toString() {
         return "bananamodel.Message[ messageId=" + messageId + " ]";
     }
-    
+
 }

@@ -45,6 +45,7 @@ public class PhoneNumber implements Serializable {
     private String numberText;
     @JoinColumn(name = "user_id", referencedColumnName = "user_id")
     @ManyToOne
+    @JsonIgnore
     private User user;
 
     public PhoneNumber() {
@@ -71,7 +72,6 @@ public class PhoneNumber implements Serializable {
     }
 
     @XmlTransient
-    @JsonIgnore
     public User getUser() {
         return user;
     }

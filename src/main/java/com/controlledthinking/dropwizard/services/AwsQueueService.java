@@ -46,8 +46,8 @@ public class AwsQueueService implements QueueService {
         credentialsProvider = new AWSStaticCredentialsProvider(new BasicAWSCredentials(
                 configuration.getAccessKey(), 
                 configuration.getSecretKey()));
-        epc = new AwsClientBuilder.EndpointConfiguration(configuration.getSqsRegionUrl(), 
-                                                            configuration.getSqsRegion());
+        epc = new AwsClientBuilder.EndpointConfiguration(configuration.getSnsRegionUrl(), 
+                                                            configuration.getSnsRegion());
         builder = AmazonSQSClientBuilder.standard().withCredentials(credentialsProvider);
         builder.setEndpointConfiguration(epc);
     }
