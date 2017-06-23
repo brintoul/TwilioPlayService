@@ -1,5 +1,6 @@
 package com.controlledthinking.dropwizard;
 
+import com.controlledthinking.dropwizard.beans.ScheduledMessageTask;
 import com.controlledthinking.dropwizard.resources.AuthResource;
 import com.controlledthinking.dropwizard.core.Customer;
 import com.controlledthinking.dropwizard.core.CustomerImmediateMessage;
@@ -79,13 +80,14 @@ public class TwilioPhoneNumberApplication extends Application<TwilioPhoneNumberC
         final MessageDAO messageDao = new MessageDAO(hibernate.getSessionFactory());
         final UserDAO userDao = new UserDAO(hibernate.getSessionFactory());        
         final JWTHandler<UserDTO> jwtHandler = getJwtHandler(configuration);
-        
+        final ScheduledMessageTask scheduledMessageTask = new ScheduledMessageTask();
         //TODO:  THIS WILL HAVE TO FIND A NEW HOME.  PUT IT HERE FOR NOW.
         log.info("Setting up the AWS SNS");
         QueueService queueService = new AwsNotificationService(configuration.getAwsConfiguration());
         queueService.setupQueue();
         
         log.info("About to register the resources with Jersey");
+        environment.lifecycle().manage(scheduledMessageTask);
         JerseyEnvironment jerseyEnvironment = environment.jersey();
         Stream.of(
                 new AuthResource(jwtHandler, userDao),
