@@ -34,10 +34,10 @@ import javax.ws.rs.core.Response.Status;
 @Produces(MediaType.APPLICATION_JSON)
 public class ImmediateMessageResource {
 
-    private QueueService queueService;
-    private MessageDAO dao;
-    private CustomerDAO custDao;
-    private MessageGroupDAO groupDao;
+    private final QueueService queueService;
+    private final MessageDAO dao;
+    private final CustomerDAO custDao;
+    private final MessageGroupDAO groupDao;
     
     public ImmediateMessageResource(QueueService qservice, MessageDAO dao, CustomerDAO custDao, MessageGroupDAO groupDao) {
         this.queueService = qservice;
