@@ -13,10 +13,12 @@ import com.controlledthinking.dropwizard.core.PhoneNumber;
 import com.controlledthinking.dropwizard.core.User;
 import com.controlledthinking.dropwizard.core.UserDTO;
 import com.controlledthinking.dropwizard.db.MessageDAO;
+import com.controlledthinking.dropwizard.db.ScheduledMessageDAO;
 import com.controlledthinking.dropwizard.db.UserDAO;
 import com.controlledthinking.dropwizard.resources.CustomerResource;
 import com.controlledthinking.dropwizard.resources.ImmediateMessageResource;
 import com.controlledthinking.dropwizard.resources.MessageGroupResource;
+import com.controlledthinking.dropwizard.resources.ScheduledMessageResource;
 import com.controlledthinking.dropwizard.services.AwsNotificationService;
 import com.controlledthinking.dropwizard.services.QueueService;
 import io.dropwizard.Application;
@@ -78,6 +80,7 @@ public class TwilioPhoneNumberApplication extends Application<TwilioPhoneNumberC
         final CustomerDAO custDao = new CustomerDAO(hibernate.getSessionFactory());
         final MessageGroupDAO groupDao = new MessageGroupDAO(hibernate.getSessionFactory());
         final MessageDAO messageDao = new MessageDAO(hibernate.getSessionFactory());
+        final ScheduledMessageDAO smessageDao = new ScheduledMessageDAO(hibernate.getSessionFactory());
         final UserDAO userDao = new UserDAO(hibernate.getSessionFactory());        
         final JWTHandler<UserDTO> jwtHandler = getJwtHandler(configuration);
         final ScheduledMessageTask scheduledMessageTask = new ScheduledMessageTask();
@@ -95,6 +98,7 @@ public class TwilioPhoneNumberApplication extends Application<TwilioPhoneNumberC
                 new CustomerResource(custDao, userDao),
                 new MessageGroupResource(groupDao, custDao),
                 new ImmediateMessageResource(queueService, messageDao, custDao, groupDao),
+                new ScheduledMessageResource(custDao, smessageDao),
                 new BananaAuthDynamicFeature(configuration, jwtHandler),
                 new BananaAuthValueFactoryProvider.Binder())
             .forEach(jerseyEnvironment::register);

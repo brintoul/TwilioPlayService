@@ -5,7 +5,7 @@
  */
 package com.controlledthinking.dropwizard.db;
 
-import com.controlledthinking.dropwizard.core.CustomerImmediateMessage;
+import com.controlledthinking.dropwizard.core.CustomerScheduledMessage;
 import io.dropwizard.hibernate.AbstractDAO;
 import org.hibernate.HibernateException;
 import org.hibernate.SessionFactory;
@@ -14,15 +14,15 @@ import org.hibernate.SessionFactory;
  *
  * @author brintoul
  */
-public class MessageDAO extends AbstractDAO<CustomerImmediateMessage> {
+public class ScheduledMessageDAO extends AbstractDAO<CustomerScheduledMessage> {
     
-    public MessageDAO(SessionFactory sessionFactory) {
+    public ScheduledMessageDAO(SessionFactory sessionFactory) {
         super(sessionFactory);
     }
-    
-    @Override
-    public CustomerImmediateMessage persist(CustomerImmediateMessage entity) throws HibernateException {        
-        return super.persist(entity); 
-    }
 
+    @Override
+    public CustomerScheduledMessage persist(CustomerScheduledMessage entity) throws HibernateException {
+        return super.persist(entity);
+    }
+    
 }
