@@ -40,6 +40,9 @@ public class CustomerDAO extends AbstractDAO<Customer> {
 
     public boolean deleteCustomer(int customerId) {
         Customer customer = get(customerId);
+        if(customer == null) {
+            return false;
+        }
         Collection<MessageGroup> groups = customer.getMessageGroupCollection();
         groups.forEach((_item) -> {
             groups.remove(customer);
