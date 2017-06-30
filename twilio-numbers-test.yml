@@ -36,7 +36,7 @@ aws:
     snsRegionUrl: sns.us-west-1.amazonaws.com
     snsRegion: us-west-1
     accessKey: AKIAIENHPCNXJMEJGA7Q
-    secretKey: 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
+    secretKey: XXX
     username:  sqs-user
     queueInfo:
         immediateQueueName: ImmediateSendQueue
