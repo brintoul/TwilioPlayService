@@ -118,6 +118,7 @@ public class Customer implements Serializable {
     }
 
     @XmlTransient
+    @JsonProperty("messageGroups")
     public Collection<MessageGroup> getMessageGroupCollection() {
         return messageGroups;
     }

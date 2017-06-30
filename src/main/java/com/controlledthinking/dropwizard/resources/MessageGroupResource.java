@@ -60,6 +60,9 @@ public class MessageGroupResource {
     public boolean addCustomerToGroup(@AuthRequired(Privilege.USER) UserDTO user, @PathParam("groupId") int groupId, @QueryParam("customerId") int customerId) {
         MessageGroup mg = dao.getWithCustomers(groupId);
         Customer customer = custDao.getById(customerId);
+        if( customer == null ) {
+            return false;
+        }
         if( customer.getUser().getUserId() != user.getUserId()) {
             throw new WebApplicationException(Status.FORBIDDEN);
         }
@@ -70,7 +73,7 @@ public class MessageGroupResource {
     @GET
     @Timed
     @UnitOfWork
-    @Path("/user/{userId}")
+    @Path("/user")
     public List<MessageGroup> getGroupsForUser(@AuthRequired(Privilege.USER) UserDTO user) {
         return dao.getAllForUser(user.getUserId());
     }
