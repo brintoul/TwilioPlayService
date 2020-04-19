@@ -86,8 +86,4 @@ CREATE TABLE cust_group (
     CONSTRAINT pk_cust_group PRIMARY KEY (group_id,cust_id),
     FOREIGN KEY (group_id) REFERENCES message_group(group_id),
     FOREIGN KEY (cust_id) REFERENCES customer(customer_id) ON DELETE CASCADE
-); 
-
-INSERT INTO user (username,password) VALUES ('brintoul',<password>);
-INSERT INTO phone_numbers (number_text,user_id) VALUES ('+18583566213',1);
-    
+);    
