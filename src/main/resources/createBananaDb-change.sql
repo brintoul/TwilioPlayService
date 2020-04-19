@@ -87,6 +87,6 @@ CREATE TABLE cust_group (
     FOREIGN KEY (cust_id) REFERENCES customer(customer_id) ON DELETE CASCADE
 ); 
 
-INSERT INTO user (username,password) VALUES ('brintoul','temporary');
+INSERT INTO user (username,password) VALUES ('brintoul',<password>);
 INSERT INTO phone_numbers (number_text,user_id) VALUES ('+18583566213',1);
     
