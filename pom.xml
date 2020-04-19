@@ -20,7 +20,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <dropwizard.version>1.1.0</dropwizard.version>
-        <mainClass>com.controlledthinking.dropwizard.HelloWorldProjectApplication</mainClass>
+        <mainClass>com.controlledthinking.dropwizard.TwilioPhoneNumberApplication</mainClass>
     </properties>
 
     <dependencyManagement>
@@ -36,6 +36,11 @@
     </dependencyManagement>
 
     <dependencies>
+        <dependency>
+            <groupId>org.mindrot</groupId>
+            <artifactId>jbcrypt</artifactId>
+            <version>0.4</version>
+        </dependency>
         <dependency>
             <groupId>io.dropwizard</groupId>
             <artifactId>dropwizard-core</artifactId>
@@ -123,6 +128,9 @@
                         <goals>
                             <goal>shade</goal>
                         </goals>
+                        <configuration>
+                            <finalName>twilioBanaya</finalName>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>

@@ -32,8 +32,6 @@ public class CustomerImmediateMessage extends Message {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Customer customer;
     @Transient
-    private String phoneNumberText;
-    @Transient
     private String sendingNumberText;
 
     @JsonIgnore
@@ -50,7 +48,7 @@ public class CustomerImmediateMessage extends Message {
     }
 
     public void setPhoneNumberText(String phoneNumberText) {
-        this.customer.setNumberText(phoneNumberText);
+        //this.customer.setNumberText(phoneNumberText);
     }
 
     public String getSendingNumberText() {

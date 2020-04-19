@@ -69,16 +69,16 @@ public class AwsQueueService implements QueueService {
     }
     
     @Override
-    public void setupQueue() {
+    public void setupOutgoingQueue(String queueName) {
         
         AmazonSQS client = builder.build();
-        ListQueuesRequest req = new ListQueuesRequest(configuration.getQueueInfo().get("immediateQueueName"));
+        ListQueuesRequest req = new ListQueuesRequest(configuration.getQueueInfo().get(queueName));
         ListQueuesResult result = client.listQueues(req);
         if(result.getQueueUrls().isEmpty()) {
             //TODO:  ADD LOGGING - IN FACT, ADD LOGGING EVERYWHERE
             log.log(Level.INFO, "Creating queue for " + configuration.getQueueInfo().get("immediateQueueName"));
             CreateQueueRequest createQueueReq = new CreateQueueRequest();
-            createQueueReq.setQueueName(configuration.getQueueInfo().get("immediateQueueName"));
+            createQueueReq.setQueueName(configuration.getQueueInfo().get(queueName));
             client.createQueue(createQueueReq);
         } else {
             if(result.getQueueUrls().size() > 1 ) {
@@ -86,6 +86,11 @@ public class AwsQueueService implements QueueService {
             }
             this.queueUrl = result.getQueueUrls().get(0);        
         }
+    }
+    
+    @Override 
+    public void setupIncomingQueue(String queueName) {
+        log.log(Level.INFO, "Not implemented.");
     }
     
 }

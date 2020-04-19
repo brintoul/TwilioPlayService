@@ -69,8 +69,9 @@ public class CustomerResource {
     @UnitOfWork
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/user")
-    public Set<Customer> fetchAllForUser(@AuthRequired(Privilege.USER) UserDTO user) {
-        return userDao.fetchUserCustomers(user.getUserId());
+    public List<Customer> fetchAllForUser(@AuthRequired(Privilege.USER) UserDTO user) {
+        return dao.fetchForUser(user.getUserId());
+        //return userDao.fetchUserCustomers(user.getUserId());
     }
         
     @GET

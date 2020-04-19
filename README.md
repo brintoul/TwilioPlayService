@@ -18,6 +18,11 @@ Currently the following REST calls are supported:
     DELETE  /customers/{customerId} (com.controlledthinking.dropwizard.resources.CustomerResource)
 
 
-All resources are currently protected and need to login.  POST to /auth/login to get the JWT that must be set in a "X-auth" header on subsequent requests.
+All resources are currently protected and need to login.  POST to /auth/login to get the JWT that must be set in a "Authorize" header on subsequent requests
+with the format:  "Bearer <KEY>".
 
 Look in "core" package for model classes which should be JSON to send to PUTs and POSTs.
+
+POST /auth/login application/json {"username":"brintoul","password":"secret"}
+
+For now, I can run "docker run brintoul/banaya" to start up the MySQL database.

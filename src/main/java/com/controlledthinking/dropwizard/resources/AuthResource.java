@@ -11,13 +11,17 @@ import com.controlledthinking.dropwizard.core.UserDTO;
 import com.controlledthinking.dropwizard.db.UserDAO;
 import io.dropwizard.hibernate.UnitOfWork;
 import javax.validation.Valid;
+import javax.ws.rs.OPTIONS;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import jwt4j.JWTHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.mindrot.jbcrypt.BCrypt;
 
 /**
  *
@@ -35,14 +39,26 @@ public class AuthResource {
         this.userDao = userDao;
     }
     
+    @OPTIONS
+    @Path("/login")
+    public Response doIt() {
+        return Response.ok().header("Access-Control-Allow-Origin", "*").build();
+    }
+    
     @POST
     @Path("/login")
     @UnitOfWork
-    //TODO:  THIS IS WORKING WITH PASSWORDS STORED AS PLAIN TEXT.  THIS WILL BE FIXED.
+    @Produces("text/plain")
     public String login(@Valid UserCredentials userCredentials)
     {
+        if(userCredentials == null) {
+            throw new WebApplicationException(Response.Status.UNAUTHORIZED);
+        }
         User theUser = userDao.fetchByUsername(userCredentials.getUsername());
-        if(theUser.getPassword().equals(userCredentials.getPassword()) ) {
+	if(theUser == null) {
+		throw new WebApplicationException(Response.Status.UNAUTHORIZED);
+        }
+        if(BCrypt.checkpw(userCredentials.getPassword(), theUser.getPassword())) {
             log.info("The user has authenticated.  Username was: %s", userCredentials.getUsername());
             //TODO:  RIGHT NOW WE ONLY USE THE FIRST PHONE NUMBER IN THE USER COLLECTION - GOTTA FIX
             String phoneNumberToUse = theUser.getPhoneNumbersCollection().iterator().next().getNumberText();

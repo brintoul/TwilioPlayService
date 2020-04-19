@@ -5,11 +5,16 @@
  */
 package com.controlledthinking.dropwizard.services;
 
+import org.jvnet.hk2.annotations.Contract;
+
+
 /**
  *
  * @author brintoul
  */
+@Contract
 public interface QueueService {
     public boolean sendMessageToQueue(Object message);
-    public void setupQueue();
+    public void setupOutgoingQueue(String queueName);
+    public void setupIncomingQueue(String queueName);
 }

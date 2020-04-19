@@ -19,9 +19,10 @@ import com.amazonaws.services.sns.model.Topic;
 import com.controlledthinking.dropwizard.BananaAwsConfiguration;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.util.List;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -34,7 +35,7 @@ public class AwsNotificationService implements QueueService {
     private static AwsClientBuilder.EndpointConfiguration epc;
     private static AmazonSNSClientBuilder builder;
     private String topicArn = "";
-
+    private final Logger log = LoggerFactory.getLogger(getClass());
 
     public static BananaAwsConfiguration getConfiguration() {
         return configuration;
@@ -45,6 +46,7 @@ public class AwsNotificationService implements QueueService {
     }
 
     public String getTopicArn() {
+        log.info("The topic being sent to: " + topicArn);
         return topicArn;
     }
 
@@ -53,6 +55,7 @@ public class AwsNotificationService implements QueueService {
     }
     
     public AwsNotificationService(BananaAwsConfiguration awsConfiguration) {
+        log.info("The configuration is being set in the AwsNotificationService");
         AwsNotificationService.configuration = awsConfiguration;
         credentialsProvider = new AWSStaticCredentialsProvider(new BasicAWSCredentials(
                 configuration.getAccessKey(), 
@@ -75,30 +78,57 @@ public class AwsNotificationService implements QueueService {
             snsClient.publish(pubReq);
             return true;
         } catch (JsonProcessingException ex) {
-            Logger.getLogger(AwsNotificationService.class.getName()).log(Level.SEVERE, null, ex);
+            log.info("Failed to deal with JSON", ex);
             return false;
         }
     }
 
     @Override
-    public void setupQueue() {
+    public void setupOutgoingQueue(String queueName) {
 
+        log.info("Entering setupOutgoingQueue");
         boolean createTopic = true;
         AmazonSNS snsClient = builder.build();
         ListTopicsResult ltresult = snsClient.listTopics(new ListTopicsRequest());
         List<Topic> topics = ltresult.getTopics();
         for( Topic topic : topics ) {
-            if(topic.getTopicArn().endsWith(configuration.getQueueInfo().get("immediateQueueName"))) {
+            if(topic.getTopicArn().endsWith(configuration.getQueueInfo().get(queueName))) {
                 setTopicArn(topic.getTopicArn());
                 createTopic = false;
             }
         }
 
         if( createTopic ) {
-            CreateTopicRequest ctr = new CreateTopicRequest(configuration.getQueueInfo().get("immediateQueueName"));
+            log.info("Creating the topic and its ARN thang.");
+            CreateTopicRequest ctr = new CreateTopicRequest(configuration.getQueueInfo().get(queueName));
             CreateTopicResult ctresp = snsClient.createTopic(ctr);
             setTopicArn(ctresp.getTopicArn());
+        } else {
+            log.info("Topic already created in SNS");
+	}
+    }
+    
+    @Override 
+    public void setupIncomingQueue(String queueName) {
+        log.info("Entering setupIncomingQueue");
+        boolean createTopic = true;
+        AmazonSNS snsClient = builder.build();
+        ListTopicsResult ltresult = snsClient.listTopics(new ListTopicsRequest());
+        List<Topic> topics = ltresult.getTopics();
+        for( Topic topic : topics ) {
+            if(topic.getTopicArn().endsWith(queueName)) {
+                setTopicArn(topic.getTopicArn());
+                createTopic = false;
+            }
+        }
+
+        if( createTopic ) {
+            log.info("Creating the topic and its ARN thang.");
+            CreateTopicRequest ctr = new CreateTopicRequest(queueName);
+            CreateTopicResult ctresp = snsClient.createTopic(ctr);
+            setTopicArn(ctresp.getTopicArn());
+        } else {
+            log.info("Topic already created in SNS");
         }
     }
-
 }

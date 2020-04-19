@@ -1,4 +1,4 @@
 logging:
-  level: INFO
+  level: DEBUG
   loggers:
     com.controlledthinking.dropwizard: DEBUG
