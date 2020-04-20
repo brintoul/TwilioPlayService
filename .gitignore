@@ -3,3 +3,4 @@ twilio-numbers.yml
 dependency-reduced-pom.xml
 target
 **/populate.sql
+nb-configuration.xml
